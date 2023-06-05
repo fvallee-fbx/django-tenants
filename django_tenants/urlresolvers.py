@@ -22,15 +22,15 @@ reverse_lazy = lazy(reverse, str)
 
 
 def get_subfolder_urlconf(tenant):
-   if has_multi_type_tenants():
-       urlconf = get_tenant_types()[tenant.get_tenant_type()]['URLCONF']
-   else:
-       urlconf = settings.ROOT_URLCONF
+    if has_multi_type_tenants():
+        urlconf = get_tenant_types()[tenant.get_tenant_type()]['URLCONF']
+    else:
+        urlconf = settings.ROOT_URLCONF
 
-   subfolder_prefix = get_subfolder_prefix()
-   class TenantUrlConf(ModuleType):
-       urlpatterns = [
-           path(f"{subfolder_prefix}/{tenant.domain_subfolder}/", include(urlconf))
-       ]
+    subfolder_prefix = get_subfolder_prefix()
+    class TenantUrlConf(ModuleType):
+        urlpatterns = [
+            path(f"{subfolder_prefix}/{tenant.domain_subfolder}/", include(urlconf))
+        ]
 
-   return TenantUrlConf(tenant.domain_subfolder)
+    return TenantUrlConf(tenant.domain_subfolder)
