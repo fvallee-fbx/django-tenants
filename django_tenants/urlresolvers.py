@@ -7,6 +7,7 @@ from django.conf import settings
 from django.urls import URLResolver, reverse as reverse_default, path, include
 from django.utils.functional import lazy
 from django_tenants.utils import (
+    get_public_schema_urlconf,
     get_tenant_domain_model,
     get_subfolder_prefix,
     clean_tenant_url, has_multi_type_tenants, get_tenant_types,
@@ -27,10 +28,13 @@ def get_subfolder_urlconf(tenant):
     else:
         urlconf = settings.ROOT_URLCONF
 
+    public_urlconf = get_public_schema_urlconf()
+
     subfolder_prefix = get_subfolder_prefix()
     class TenantUrlConf(ModuleType):
         urlpatterns = [
-            path(f"{subfolder_prefix}/{tenant.domain_subfolder}/", include(urlconf))
+            path(f"{subfolder_prefix}/{tenant.domain_subfolder}/", include(urlconf)),
+            path("", include(public_urlconf))
         ]
 
     return TenantUrlConf(tenant.domain_subfolder)
